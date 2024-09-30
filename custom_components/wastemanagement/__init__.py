@@ -31,10 +31,11 @@ Current Version: 5.4.1 20240911
 20240829 - Support for new ROVA API
 20240906 - New option for custom mapping
 20240911 - Fix API url for Cyclus and Montfoort
+20240930 - Translations in french and english
 
 Example config:
 Configuration.yaml:
-afvalbeheer:
+wastemanagement:
     wastecollector: Blink
     resources:
     - restafval
@@ -63,7 +64,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.discovery import async_load_platform, load_platform
 
-from .const import DOMAIN, PLATFORM_SCHEMA, CONF_ID
+from .const import DOMAIN, CONF_ID
 from .API import get_wastedata_from_config
 
 
@@ -74,7 +75,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType):
-    _LOGGER.debug("Setup of Afvalbeheer component Rest API retriever")
+    _LOGGER.debug("Setup of Waste management component Rest API retriever")
 
     config = config.get(DOMAIN, None)
 

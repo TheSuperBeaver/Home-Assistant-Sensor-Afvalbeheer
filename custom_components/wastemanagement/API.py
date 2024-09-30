@@ -16,7 +16,6 @@ from homeassistant.components import persistent_notification
 
 from .const import *
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -141,8 +140,8 @@ class WasteData(object):
             persistent_notification.create(
                 self.hass,
                 f'Waste collector "{self.waste_collector}" not found!',
-                f'Afvalwijzer {self.waste_collector}', 
-                f'{NOTIFICATION_ID}_collectornotfound_{self.waste_collector}'
+                f'Waste collector {self.waste_collector}',
+                f'{self.hass.localize(NOTIFICATION_ID)}_collectornotfound_{self.waste_collector}'
             )
 
     async def schedule_update(self, interval):
@@ -159,8 +158,8 @@ class WasteData(object):
             persistent_notification.create(
                 self.hass,
                 f'Available waste types: {", ".join(self.collector.collections.get_available_waste_types())}',
-                f'Afvalwijzer {self.waste_collector}', 
-                f'{NOTIFICATION_ID}_availablewastetypes_{self.waste_collector}')
+                f'Waste collector {self.waste_collector}',
+                f'{self.hass.localize(NOTIFICATION_ID)}_availablewastetypes_{self.waste_collector}')
             self.print_waste_type = False
 
     @property
@@ -190,7 +189,7 @@ class WasteCollector(ABC):
                     return to_type
         for from_type, to_type in self.WASTE_TYPE_MAPPING.items():
             if from_type.lower() in name.lower():
-                return to_type
+                return self.hass.localize(to_type)
         return name
 
 
@@ -1377,7 +1376,7 @@ def get_wastedata_from_config(hass, config):
         persistent_notification.create(
             hass,
             f"Update your config to use {DEPRECATED_AND_NEW_WASTECOLLECTORS[waste_collector]}! You are still using {waste_collector} as a waste collector, which is deprecated. Check your automations and lovelace config, as the sensor names may also be changed!",
-            f"Afvalbeheer {waste_collector}",
+            f"Waste collector {waste_collector}",
             f"{NOTIFICATION_ID}_update_config_{waste_collector}",
         )
         waste_collector = DEPRECATED_AND_NEW_WASTECOLLECTORS[waste_collector]
@@ -1386,7 +1385,7 @@ def get_wastedata_from_config(hass, config):
         persistent_notification.create(
             hass,
             f"Config invalid! Cityname is required for {waste_collector}",
-            f"Afvalbeheer {waste_collector}",
+            f"Waste collector {waste_collector}",
             f"{NOTIFICATION_ID}_invalid_config_{waste_collector}",
         )
         return
@@ -1395,7 +1394,7 @@ def get_wastedata_from_config(hass, config):
         persistent_notification.create(
             hass,
             f"Config invalid! Streetname is required for {waste_collector}",
-            f"Afvalbeheer {waste_collector}",
+            f"Waste collector {waste_collector}",
             f"{NOTIFICATION_ID}_invalid_config_{waste_collector}",
         )
         return

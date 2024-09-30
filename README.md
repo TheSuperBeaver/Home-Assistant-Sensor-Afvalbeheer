@@ -1,9 +1,9 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/pippyn)
-## Home Assisant sensor component for Afvalbeheer
+## Home Assisant sensor component for Waste Management
 
-Provides Home Assistant sensors for multiple Dutch and Belgium waste collectors using REST API.
+Provides Home Assistant sensors for multiple Dutch and Belgian waste collectors using REST API.
 This sensor works with the following waste collectors: Blink, Cure, Suez, ACV, Twente Milieu, Hellendoorn, Cyclus, DAR, De Fryske Marren, HVC Groep, Meerlanden, RMN (Reinigingsbedrijf Midden Nederland), Schouwen-Duiveland, Peel en Maas, Purmerend, Circulus-Berkel (Afvalvrij), Avalex, Venray, Den Haag, Berkelland, Alphen aan den Rijn, Waalre, ZRD, Spaarnelanden, SudwestFryslan, Montfoort, GAD, Cranendonck, ROVA, RD4, RWM, Limburg.NET, Afval Alert, RecycleApp, DeAfvalApp, Alkmaar, AreaReiniging, Almere, Waardlanden, Reinis, Avri, Omrin, BAR, Assen, RAD, Meppel, Montferland, PreZero, Lingewaard Voorschoten, Westland, Ôffalkalinder, Afval3xBeter, Middelburg-Vlissingen and Cleanprofs.
 
 Cure users should switch to the waste collector MijnAfvalwijzer
@@ -16,12 +16,12 @@ Ophaalkalender users should switch to the waste collector RecycleApp
 ### HACS
 You can use HACS to install this sensor. It is included by default.
 ### Manual
-Copy the files in the /custom_components/afvalbeheer/ folder to: [homeassistant]/config/custom_components/afvalbeheer/
+Copy the files in the /custom_components/wastemanagement/ folder to: [homeassistant]/config/custom_components/wastemanagement/
 
 ## Example configs:
 ### Single instance
 ```yaml
-afvalbeheer:
+wastemanagement:
   wastecollector: Blink
   resources:
     - restafval
@@ -41,7 +41,7 @@ afvalbeheer:
 ```
 ### Multiple instances
 ```yaml
-afvalbeheer:
+wastemanagement:
   - wastecollector: Blink
     resources:
       - restafval

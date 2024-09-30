@@ -1,16 +1,16 @@
 {
-    "sensor.afvalbeheer": {
+    "sensor.waste.management": {
       "version": "5.4.1",
-      "local_location": "/custom_components/afvalbeheer/__init__.py",
-      "remote_location": "https://raw.githubusercontent.com/pippyn/Home-Assistant-Sensor-Afvalbeheer/master/custom_components/afvalbeheer/__init__.py",
+      "local_location": "/custom_components/wastemanagement/__init__.py",
+      "remote_location": "https://raw.githubusercontent.com/pippyn/Home-Assistant-Sensor-Afvalbeheer/master/custom_components/wastemanagement/__init__.py",
       "visit_repo": "https://github.com/pippyn/Home-Assistant-Sensor-Afvalbeheer",
       "changelog": "https://github.com/pippyn/Home-Assistant-Sensor-Afvalbeheer/releases/latest",
       "resources": [
-          "https://raw.githubusercontent.com/pippyn/Home-Assistant-Sensor-Afvalbeheer/master/custom_components/afvalbeheer/manifest.json",
-          "https://raw.githubusercontent.com/pippyn/Home-Assistant-Sensor-Afvalbeheer/master/custom_components/afvalbeheer/sensor.py"
+          "https://raw.githubusercontent.com/pippyn/Home-Assistant-Sensor-Afvalbeheer/master/custom_components/wastemanagement/manifest.json",
+          "https://raw.githubusercontent.com/pippyn/Home-Assistant-Sensor-Afvalbeheer/master/custom_components/wastemanagement/sensor.py"
         ]
     },
-     "sensor.ophaalkalender": {
+     "sensor.collection.calendar": {
       "version": "1.1.5",
       "local_location": "/custom_components/ophaalkalender/__init__.py",
       "remote_location": "https://raw.githubusercontent.com/pippyn/Home-Assistant-Sensor-Ophaalkalender/master/custom_components/ophaalkalender/__init__.py",

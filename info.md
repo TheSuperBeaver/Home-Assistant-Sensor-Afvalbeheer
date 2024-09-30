@@ -1,6 +1,6 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/pippyn)
-## Home Assisant sensor component for Afvalbeheer
+## Home Assisant sensor component for waste management
 
 Provides Home Assistant sensors for multiple Dutch and Belgium waste collectors using REST API. 
 This sensor works with the following waste collectors:
@@ -68,7 +68,7 @@ This sensor works with the following waste collectors:
 ### Example config:
 
 ```yaml
-  afvalbeheer:
+  wastemanagement:
       wastecollector: Blink
       resources:
         - restafval

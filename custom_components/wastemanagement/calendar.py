@@ -29,7 +29,7 @@ def setup_platform(hass, config, async_add_entities, discovery_info=None):
 
 
 class AfvalbeheerCalendar(CalendarEntity):
-    """Defines a Afvalbeheer calendar."""
+    """Defines a Waste collection calendar."""
 
     _attr_icon = "mdi:delete-empty"
 
@@ -38,7 +38,7 @@ class AfvalbeheerCalendar(CalendarEntity):
         WasteData: WasteData,
         config,
     ) -> None:
-        """Initialize the Afvalbeheer entity."""
+        """Initialize the waste collection entity."""
         self.WasteData = WasteData
         self.config = config
 

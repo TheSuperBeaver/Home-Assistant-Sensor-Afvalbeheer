@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    _LOGGER.debug("Setup of sensor platform Afvalbeheer")
+    _LOGGER.debug("Setup of sensor platform waste collection")
 
     schedule_update = not (discovery_info and "config" in discovery_info)
 
@@ -44,14 +44,13 @@ class WasteTypeSensor(RestoreEntity, SensorEntity):
         self.built_in_icons = config.get(CONF_BUILT_IN_ICONS)
         self.built_in_icons_new = config.get(CONF_BUILT_IN_ICONS_NEW)
         self.disable_icons = config.get(CONF_DISABLE_ICONS)
-        self.dutch_days = config.get(CONF_TRANSLATE_DAYS)
         self.day_of_week = config.get(CONF_DAY_OF_WEEK)
         self.day_of_week_only = config.get(CONF_DAY_OF_WEEK_ONLY)
         self.always_show_day = config.get(CONF_ALWAYS_SHOW_DAY)
         self.date_only = 1 if self.date_object else config.get(CONF_DATE_ONLY)
 
-        self._today = "Vandaag" if self.dutch_days else "Today"
-        self._tomorrow = "Morgen" if self.dutch_days else "Tomorrow"
+        self._today = self.hass.localize("days.today")
+        self._tomorrow = self.hass.localize("days.tomorrow")
         
         formatted_name = _format_sensor(config.get(CONF_NAME), config.get(CONF_NAME_PREFIX),  self.waste_collector, self.waste_type)
         self._name = formatted_name
@@ -168,12 +167,11 @@ class WasteDateSensor(RestoreEntity, SensorEntity):
         self.data = data
         self.waste_types = config[CONF_RESOURCES]
         self.waste_collector = config.get(CONF_WASTE_COLLECTOR).lower()
-        self.dutch_days = config.get(CONF_TRANSLATE_DAYS)
         self.date_delta = date_delta
         if self.date_delta.days == 0:
-            day = "vandaag" if self.dutch_days else "today"
+            day = self.hass.localize("days.today")
         else:
-            day = "morgen" if self.dutch_days else "tomorrow"
+            day = self.hass.localize("days.tomorrow")
         formatted_name = _format_sensor(config.get(CONF_NAME), config.get(CONF_NAME_PREFIX),  self.waste_collector, day)
         self._name = formatted_name
         self._attr_unique_id = formatted_name.lower()
@@ -217,7 +215,7 @@ class WasteDateSensor(RestoreEntity, SensorEntity):
 
         if not collections:
             self._hidden = True
-            self._state = "Geen" if self.dutch_days else "None"
+            self._state = self.hass.localize("sensor.state.none")
             return
 
         self._hidden = False
@@ -233,9 +231,8 @@ class WasteUpcomingSensor(RestoreEntity, SensorEntity):
         self.data = data
         self.waste_types = config[CONF_RESOURCES]
         self.waste_collector = config.get(CONF_WASTE_COLLECTOR).lower()
-        self.dutch_days = config.get(CONF_TRANSLATE_DAYS)
         self.date_format = config.get(CONF_DATE_FORMAT)
-        self.first_upcoming = "eerstvolgende" if self.dutch_days else "first upcoming"
+        self.first_upcoming = self.hass.localize("days.first.upcoming")
         formatted_name = _format_sensor(config.get(CONF_NAME), config.get(CONF_NAME_PREFIX),  self.waste_collector, self.first_upcoming)
         self._name = formatted_name
         self._attr_unique_id = formatted_name.lower()
@@ -284,14 +281,14 @@ class WasteUpcomingSensor(RestoreEntity, SensorEntity):
 
         if not collections:
             self._hidden = True
-            self._state = "Geen" if self.dutch_days else "None"
+            self._state = self.hass.localize("sensor.state.none")
             return
 
         self._hidden = False
         self.__set_state(collections)
 
     def __set_state(self, collections):
-        self.upcoming_day = _translate_state(self.date_format, collections[0].date.strftime(self.date_format))
+        self.upcoming_day = _translate_state(self.hass, self.date_format, collections[0].date.strftime(self.date_format))
         self.upcoming_waste_types = ', '.join(sorted([x.waste_type for x in collections]))
         self._state = self.upcoming_day + ": " + self.upcoming_waste_types
 
@@ -304,15 +301,23 @@ def _format_sensor(name, name_prefix, waste_collector, sensor_type):
     )
 
 
-def _translate_state(date_format, state):
-    translations = {
-        "%B": DUTCH_TRANSLATION_MONTHS,
-        "%b": DUTCH_TRANSLATION_MONTHS_SHORT,
-        "%A": DUTCH_TRANSLATION_DAYS,
-        "%a": DUTCH_TRANSLATION_DAYS_SHORT
+def _translate_state(hass, date_format, state):
+    translation_keys = {
+        "%B": "months.",
+        "%b": "months.short.",
+        "%A": "days.",
+        "%a": "days.short."
     }
-    for fmt, trans_dict in translations.items():
+
+    for fmt, key_prefix in translation_keys.items():
         if fmt in date_format:
-            for EN_day, NL_day in trans_dict.items():
-                state = state.replace(EN_day, NL_day)
+            for match, key_suffix in [
+                ('%B', 'months.'), ('%b', 'months.short.'),
+                ('%A', 'days.'), ('%a', 'days.short.')
+            ]:
+                if match in date_format:
+                    localized = hass.localize(f"{key_prefix}{state}")
+                    if localized:
+                        state = localized
+                        break
     return state
