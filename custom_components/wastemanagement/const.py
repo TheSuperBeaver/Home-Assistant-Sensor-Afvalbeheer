@@ -64,12 +64,12 @@ PLATFORM_SCHEMA = vol.Schema(
     }, extra=vol.ALLOW_EXTRA  # Allow extra required due when validating config as sensor (platform key is added to config)
 )
 
-ATTR_WASTE_COLLECTOR = 'attr.waste.collector'
-ATTR_UPCOMING_DAY = 'attr.upcoming.day'
-ATTR_UPCOMING_WASTE_TYPES = 'attr.upcoming.waste.types'
-ATTR_HIDDEN = 'attr.hidden'
-ATTR_SORT_DATE = 'attr.sort.date'
-ATTR_DAYS_UNTIL = 'attr.days.until'
+ATTR_WASTE_COLLECTOR = 'wastecollector'
+ATTR_UPCOMING_DAY = 'upcomingday'
+ATTR_UPCOMING_WASTE_TYPES = 'wastetypes'
+ATTR_HIDDEN = 'hidden'
+ATTR_SORT_DATE = 'sort_date'
+ATTR_DAYS_UNTIL = 'days_until'
 
 NOTIFICATION_ID = "notification.id"
 

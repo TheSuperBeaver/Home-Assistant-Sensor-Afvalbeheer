@@ -1416,4 +1416,4 @@ def get_wastedata_from_config(hass, config):
 
 
 def _format_id(waste_collector, postcode, house_number):
-    return waste_collector + "-" + postcode + "-" + str(house_number)
+    return waste_collector + "-" + str(postcode) + "-" + str(house_number)

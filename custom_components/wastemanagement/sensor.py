@@ -21,10 +21,20 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     config_data = discovery_info["config"] if discovery_info and "config" in discovery_info else config
     data = hass.data[DOMAIN].get(config_data[CONF_ID], None) if not schedule_update else get_wastedata_from_config(hass, config)
 
-    entities = [WasteTypeSensor(data, resource, config_data) for resource in config_data[CONF_RESOURCES]]
-    
+    entities = [WasteTypeSensor(data, resource, config_data, hass) for resource in config_data[CONF_RESOURCES]]
+
+    translations = await hass.helpers.translation.async_get_translations(hass.config.language, category="days")
+    logger.info("Loaded translations: %s", translations)
     if config_data.get(CONF_UPCOMING):
-        entities.extend([WasteDateSensor(data, config_data, timedelta(days=delta)) for delta in (0, 1)])
+        entities.extend([
+            WasteDateSensor(
+                data,
+                config_data,
+                timedelta(days=delta),
+                translations["days.today"] if delta == 0 else translations["days.tomorrow"]
+            )
+            for delta in (0, 1)
+        ])
         entities.append(WasteUpcomingSensor(data, config_data))
     
     async_add_entities(entities)
@@ -35,7 +45,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
 class WasteTypeSensor(RestoreEntity, SensorEntity):
 
-    def __init__(self, data, waste_type, config):
+    def __init__(self, data, waste_type, config, hass):
         self.data = data
         self.waste_type = waste_type
         self.waste_collector = config.get(CONF_WASTE_COLLECTOR).lower()
@@ -48,10 +58,8 @@ class WasteTypeSensor(RestoreEntity, SensorEntity):
         self.day_of_week_only = config.get(CONF_DAY_OF_WEEK_ONLY)
         self.always_show_day = config.get(CONF_ALWAYS_SHOW_DAY)
         self.date_only = 1 if self.date_object else config.get(CONF_DATE_ONLY)
+        self.hass = hass
 
-        self._today = self.hass.localize("days.today")
-        self._tomorrow = self.hass.localize("days.tomorrow")
-        
         formatted_name = _format_sensor(config.get(CONF_NAME), config.get(CONF_NAME_PREFIX),  self.waste_collector, self.waste_type)
         self._name = formatted_name
         self._attr_unique_id = formatted_name.lower()
@@ -144,9 +152,9 @@ class WasteTypeSensor(RestoreEntity, SensorEntity):
             else:
                 self._state = collection.date.strftime(date_format)
         elif date_diff == 1:
-            self._state = collection.date.strftime(self._tomorrow if self.day_of_week_only else self._tomorrow + ", " + date_format)
+            self._state = collection.date.strftime(self.hass.localize("days.tomorrow") if self.day_of_week_only else self.hass.localize("days.tomorrow") + ", " + date_format)
         elif date_diff == 0:
-            self._state = collection.date.strftime(self._today if self.day_of_week_only else self._today + ", " + date_format)
+            self._state = collection.date.strftime(self.hass.localize("days.today") if self.day_of_week_only else self.hass.localize("days.today") + ", " + date_format)
         else:
             self._state = None
 
@@ -163,15 +171,11 @@ class WasteTypeSensor(RestoreEntity, SensorEntity):
 
 class WasteDateSensor(RestoreEntity, SensorEntity):
 
-    def __init__(self, data, config, date_delta):
+    def __init__(self, data, config, date_delta, day):
         self.data = data
         self.waste_types = config[CONF_RESOURCES]
         self.waste_collector = config.get(CONF_WASTE_COLLECTOR).lower()
         self.date_delta = date_delta
-        if self.date_delta.days == 0:
-            day = self.hass.localize("days.today")
-        else:
-            day = self.hass.localize("days.tomorrow")
         formatted_name = _format_sensor(config.get(CONF_NAME), config.get(CONF_NAME_PREFIX),  self.waste_collector, day)
         self._name = formatted_name
         self._attr_unique_id = formatted_name.lower()
